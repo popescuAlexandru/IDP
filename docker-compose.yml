@@ -1,0 +1,34 @@
+version: '3.3'
+
+services:
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'iamroot'
+      MYSQL_DATABASE: 'rides'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'iamuser'
+
+  adm_service:
+    image: adm_service:latest
+    depends_on:
+      - mysql
+    restart: always
+    ports:
+      - '15000:15000'
+  air_service:
+    image: air_service:latest
+    depends_on:
+      - mysql
+    restart: always
+    ports:
+      - '16000:16000'
+volumes:
+    db_data: {}

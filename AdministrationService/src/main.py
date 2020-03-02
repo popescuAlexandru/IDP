@@ -5,8 +5,8 @@ import mysql.connector
 app = Flask(__name__)
 
 
-@app.route('/add_flight', methods=['POST'])
-def add_flight():
+@app.route('/add_ride', methods=['POST'])
+def add_ride():
 	payload = request.get_json(silent=True)
 	if not payload:
 		return jsonify({'status': 'bad request'}), 400
@@ -15,14 +15,14 @@ def add_flight():
 			# Inseram informatiile legate de zbor in tabela flights
 			mydb.cmd_reset_connection()
 			mycursor = mydb.cursor()
-			command = "INSERT INTO flights(src, dst, departure_day, departure_hour, duration, available_seats, flight_id) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+			command = "INSERT INTO rides(src, dst, departure_day, departure_hour, duration, available_seats, ride_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
 			values = (payload.get('source'), payload.get('dest'), int(payload.get('departure_day')),
 					  int(payload.get('departure_hour')), int(payload.get('duration')),
-					  int(payload.get('number_of_seats')), payload.get('flight_id'))
+					  int(payload.get('number_of_seats')), payload.get('flight_id')), int(payload.get('price')),
 			mycursor.execute(command, values)
 			mycursor.close()
 			mydb.commit()
-			return jsonify({'status': 'Flight added'}), 200
+			return jsonify({'status': 'Ride added'}), 200
 		except mysql.connector.IntegrityError as err:
 			return jsonify({'status': "Integrity error: {}".format(err)}), 400
 		except mysql.connector.DataError as err:
@@ -31,24 +31,23 @@ def add_flight():
 			return jsonify({'status': str(err)}), 400
 
 
-
-@app.route('/cancel_flight', methods=['POST'])
-def cancel_flight():
+@app.route('/cancel_ride', methods=['POST'])
+def cancel_ride():
 	payload = request.get_json(silent=True)
 	if not payload:
 		return jsonify({'status': 'bad request'}), 400
 	else:
 		try:
-			# !!! Intai stergem din tabela bookings deoarece daca stergem din tabela flights (foreign key-ul fiind de
-			# tipul on delete cascade) se vor sterge din tabela flights_bookings intrarile asociate zborului si nu vom
+			# !!! Intai stergem din tabela bookings deoarece daca stergem din tabela rides (foreign key-ul fiind de
+			# tipul on delete cascade) se vor sterge din tabela rides_bookings intrarile asociate zborului si nu vom
 			# mai stii care booking-uri trebuiesc anulate
 
 			# Stergem rezervarile facute pentru acest zbor din tabela bookings
 			# Stergem informatiile legate de zbor din tabela flights
 			mydb.cmd_reset_connection()
 			mycursor = mydb.cursor()
-			command = "delete from bookings where booking_id in (select distinct booking_id from flights_bookings where flight_id = '{}');"\
-					  "delete from flights where flight_id = '{}';".format(payload.get('flight_id'), payload.get('flight_id'))
+			command = "delete from bookings where booking_id in (select distinct booking_id from rides_bookings where ride_id = '{}');"\
+					  "delete from rides where ride_id = '{}';".format(payload.get('ride_id'), payload.get('ride_id'))
 			found = False
 			for rez in mycursor.execute(command, multi=True):
 				if rez.rowcount != 0:
@@ -57,7 +56,7 @@ def cancel_flight():
 			mydb.commit()
 			if found:
 				return jsonify({'status': 'Flight deleted'}), 200
-			return jsonify({'status': 'Flight does not exist'}), 400
+			return jsonify({'status': 'Ride does not exist'}), 400
 		except mysql.connector.IntegrityError as err:
 			return jsonify({'status': "Integrity error: {}".format(err)}), 400
 		except mysql.connector.DataError as err:
@@ -71,27 +70,31 @@ def init_db():
 	try:
 		mycursor = mydb.cursor()
 		for _ in mycursor.execute(
-				"create table if not exists flights("
-				"	flight_id varchar(50) primary key,"
-				"	src varchar(50) not null,"
-				"	dst varchar(50) not null,"
-				"	departure_hour integer not null check(departure_hour >= 0 and departure_hour <= 23),"
-				"	departure_day integer not null check(departure_day >= 1 and departure_day <= 365),"
-				"	duration integer not null check(duration >= 0),"
-				"	available_seats integer not null,"
-				"	booked_tickets integer default 0,"
-				"	bought_tikets integer default 0"
-				");"
-				"create table if not exists bookings("
-				"	booking_id varchar(50) primary key"
-				");"
-				"create table if not exists flights_bookings("
-				"	flight_id varchar(50),"
-				"	booking_id varchar(50),"
-				"	FOREIGN KEY (flight_id) REFERENCES flights (flight_id) on delete cascade,"
-				"	FOREIGN KEY (booking_id) REFERENCES bookings (booking_id) on delete cascade,"
-				"	primary key (flight_id, booking_id)"
-				");",
+				"""
+					create table if not exists rides(
+						ride_id varchar(50) primary key,
+						src varchar(50) not null,
+						dst varchar(50) not null,
+						departure_hour integer not null check(departure_hour >= 0 and departure_hour <= 23),
+						departure_day integer not null check (departure_day >= 1 and departure_day <= 365),
+						duration integer not null check (duration > 0),
+						price integer not null check (price > 0),
+						available_seats integer not null check (available_seats > 0),
+						booked_tickets integer default 0,
+						bought_tickets integer default 0
+					);
+					
+					create table if not exists bookings(
+						booking_id varchar(50) primary key
+					);
+					
+					create table if not exists rides_bookings(
+						ride_id varchar(50),
+						booking_id varchar(50),
+						FOREIGN KEY (ride_id) REFERENCES rides (ride_id),
+						FOREIGN KEY (booking_id) REFERENCES bookings (booking_id)
+					);
+				""",
 				multi=True
 		):
 			pass
@@ -109,7 +112,7 @@ if __name__ == '__main__':
 			host="mysql",
 			user="root",
 			passwd="iamroot",
-			database="airline"
+			database="rides"
 		)
 	except Exception as err:
 		print("Cannot connect to database: ", err, '\n')
