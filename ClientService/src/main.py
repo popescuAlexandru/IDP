@@ -56,7 +56,7 @@ def get_optimal_route():
 				continue
 			# extragem vecinii
 			command = "select * from rides where (departure_day>{} or (departure_day={} and departure_hour>={})) and src='{}'" \
-					  "and booked_tickets<available_seats*1.1;".format(new_day, new_day, new_hour, last_ride[4])
+					  "and booked_tickets<available_seats*1.5;".format(new_day, new_day, new_hour, last_ride[4])
 			print(command)
 			mycursor.reset()
 			mycursor.execute(command)
@@ -177,7 +177,7 @@ def buy_ticket():
 			# Salvam modificarile in baza de date
 			mycursor.close()
 			mydb.commit()
-		# Sortam zborurile dupa ziua si ora de plecare si construim informatia din boarding pass
+		# Sortam cursele dupa ziua si ora de plecare si construim informatia din boarding pass
 		sorted(details, key=lambda x: (x[0], x[1]))
 		boardingPass += '==========================================\n'\
 						'==========================================\n'\
@@ -189,7 +189,7 @@ def buy_ticket():
 			boardingPass += 'DAY ' + str(detail[0]) + ', HOUR ' + str(detail[1]) + ': ' + 'ride ' \
 							+ detail[2] + ' FROM ' + detail[3] + ' TO ' + detail[4] + ' duration ' + str(
 				detail[5]) + ' hours\n'
-		boardingPass += "Thank you for flying with our company. Enjoy the ride!\n"
+		boardingPass += "Enjoy the ride!\n"
 		return jsonify({'status': 'OK', 'boarding_pass': boardingPass}), 200
 	except Exception as err:
 		return jsonify({'status': str(err), 'boarding_pass': ''}), 400
