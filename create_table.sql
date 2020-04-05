@@ -15,9 +15,9 @@ create table if not exists bookings(
     booking_id varchar(50) primary key
 );
 
-create table if not exists flights_bookings(
-    flight_id varchar(50),
+create table if not exists rides_bookings(
+    ride_id varchar(50),
     booking_id varchar(50),
-    FOREIGN KEY (flight_id) REFERENCES flights (flight_id),
+    FOREIGN KEY (ride_id) REFERENCES rides (ride_id),
     FOREIGN KEY (booking_id) REFERENCES bookings (booking_id)
 );

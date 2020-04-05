@@ -12,13 +12,13 @@ def add_ride():
 		return jsonify({'status': 'bad request'}), 400
 	else:
 		try:
-			# Inseram informatiile legate de zbor in tabela flights
+			# Inseram informatiile legate de zbor in tabela rides
 			mydb.cmd_reset_connection()
 			mycursor = mydb.cursor()
 			command = "INSERT INTO rides(src, dst, departure_day, departure_hour, duration, available_seats, ride_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
 			values = (payload.get('source'), payload.get('dest'), int(payload.get('departure_day')),
 					  int(payload.get('departure_hour')), int(payload.get('duration')),
-					  int(payload.get('number_of_seats')), payload.get('flight_id')), int(payload.get('price')),
+					  int(payload.get('number_of_seats')), payload.get('ride_id')), int(payload.get('price')),
 			mycursor.execute(command, values)
 			mycursor.close()
 			mydb.commit()
@@ -43,7 +43,7 @@ def cancel_ride():
 			# mai stii care booking-uri trebuiesc anulate
 
 			# Stergem rezervarile facute pentru acest zbor din tabela bookings
-			# Stergem informatiile legate de zbor din tabela flights
+			# Stergem informatiile legate de zbor din tabela rides
 			mydb.cmd_reset_connection()
 			mycursor = mydb.cursor()
 			command = "delete from bookings where booking_id in (select distinct booking_id from rides_bookings where ride_id = '{}');"\
@@ -55,7 +55,7 @@ def cancel_ride():
 			mycursor.close()
 			mydb.commit()
 			if found:
-				return jsonify({'status': 'Flight deleted'}), 200
+				return jsonify({'status': 'Ride deleted'}), 200
 			return jsonify({'status': 'Ride does not exist'}), 400
 		except mysql.connector.IntegrityError as err:
 			return jsonify({'status': "Integrity error: {}".format(err)}), 400
