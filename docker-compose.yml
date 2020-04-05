@@ -23,5 +23,14 @@ services:
     restart: always
     ports:
       - '15000:15000'
+
+  client_service:
+    image: alexandrupopescu0697/clientservice:latest
+    depends_on:
+      - mysql
+    restart: always
+    ports:
+      - '16000:16000'
+
 volumes:
     db_data: {}
