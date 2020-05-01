@@ -9,41 +9,42 @@ app = Flask(__name__)
 def add_ride():
 	payload = request.get_json(silent=True)
 	if not payload:
-		return jsonify({'status': 'bad request'}), 400
+		return jsonify({'status': 'bad request'}), 200
 	else:
 		try:
-			# Inseram informatiile legate de zbor in tabela rides
+			# Inseram informatiile legate de cursa in tabela rides
 			mydb.cmd_reset_connection()
 			mycursor = mydb.cursor()
 			command = "INSERT INTO rides(src, dst, departure_day, departure_hour, duration, available_seats, ride_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
 			values = (payload.get('source'), payload.get('dest'), int(payload.get('departure_day')),
 					  int(payload.get('departure_hour')), int(payload.get('duration')),
 					  int(payload.get('number_of_seats')), payload.get('ride_id')), int(payload.get('price')),
+			print(values)
 			mycursor.execute(command, values)
 			mycursor.close()
 			mydb.commit()
 			return jsonify({'status': 'Ride added'}), 200
 		except mysql.connector.IntegrityError as err:
-			return jsonify({'status': "Integrity error: {}".format(err)}), 400
+			return jsonify({'status': "Integrity error: {}".format(err)}), 200
 		except mysql.connector.DataError as err:
-			return jsonify({'status': "Data error: {}".format(err)}), 400
+			return jsonify({'status': "Data error: {}".format(err)}), 200
 		except Exception as err:
-			return jsonify({'status': str(err)}), 400
+			return jsonify({'status': str(err)}), 200
 
 
 @app.route('/cancel_ride', methods=['POST'])
 def cancel_ride():
 	payload = request.get_json(silent=True)
 	if not payload:
-		return jsonify({'status': 'bad request'}), 400
+		return jsonify({'status': 'bad request'}), 200
 	else:
 		try:
 			# !!! Intai stergem din tabela bookings deoarece daca stergem din tabela rides (foreign key-ul fiind de
-			# tipul on delete cascade) se vor sterge din tabela rides_bookings intrarile asociate zborului si nu vom
+			# tipul on delete cascade) se vor sterge din tabela rides_bookings intrarile asociate cursei si nu vom
 			# mai stii care booking-uri trebuiesc anulate
 
-			# Stergem rezervarile facute pentru acest zbor din tabela bookings
-			# Stergem informatiile legate de zbor din tabela rides
+			# Stergem rezervarile facute pentru acest cursa din tabela bookings
+			# Stergem informatiile legate de cursa din tabela rides
 			mydb.cmd_reset_connection()
 			mycursor = mydb.cursor()
 			command = "delete from bookings where booking_id in (select distinct booking_id from rides_bookings where ride_id = '{}');"\
@@ -56,13 +57,13 @@ def cancel_ride():
 			mydb.commit()
 			if found:
 				return jsonify({'status': 'Ride deleted'}), 200
-			return jsonify({'status': 'Ride does not exist'}), 400
+			return jsonify({'status': 'Ride does not exist'}), 200
 		except mysql.connector.IntegrityError as err:
-			return jsonify({'status': "Integrity error: {}".format(err)}), 400
+			return jsonify({'status': "Integrity error: {}".format(err)}), 200
 		except mysql.connector.DataError as err:
-			return jsonify({'status': "Data error: {}".format(err)}), 400
+			return jsonify({'status': "Data error: {}".format(err)}), 200
 		except Exception as err:
-			return jsonify({'status': str(err)}), 400
+			return jsonify({'status': str(err)}), 200
 
 
 def init_db():
