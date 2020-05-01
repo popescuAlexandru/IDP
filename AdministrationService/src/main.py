@@ -32,6 +32,28 @@ def add_ride():
 			return jsonify({'status': str(err)}), 200
 
 
+@app.route('/list_rides', methods=['POST'])
+def list_rides():
+	payload = request.get_json(silent=True)
+	if not payload:
+		return jsonify({'status': 'bad request'}), 200
+	else:
+		try:
+			mydb.cmd_reset_connection()
+			mycursor = mydb.cursor()
+			command = "select * from rides"
+			mycursor.execute(command)
+			results = mycursor.fetchall()
+			data = []
+			for result in results:
+				data.append(result)
+			mycursor.close()
+			mydb.commit()
+			return jsonify({'status': 'Rides listed', 'data': data}), 200
+		except Exception as err:
+			return jsonify({'status': str(err)}), 200
+
+
 @app.route('/cancel_ride', methods=['POST'])
 def cancel_ride():
 	payload = request.get_json(silent=True)
