@@ -1,18 +1,12 @@
 <?php
 
 if (isset($_POST['submit'])) {
-	$url = 'http://localhost:16000/get_optimal_route';
-	$data = array(  'source' => $_POST["source"],
-					'dest' => $_POST["dest"],
-					'departure_day' => $_POST["departure_day"],
-					'max_flights' => $_POST["departure_hour"]
-			);
+	$url = 'http://localhost:16000/get_optimal_route?source=' . urlencode($_POST["source"]) . '&dest=' . urlencode($_POST["dest"]) . '&departure_day=' . urlencode($_POST["departure_day"]) . '&max_rides=' . urlencode($_POST["max_rides"]);
 
 	$options = array(
 		'http' => array(
 		    'header'  => "Content-type: application/json\r\n",
 		    'method'  => 'GET',
-		    'content' => json_encode($data)
 		)
 	);
 
@@ -20,6 +14,7 @@ if (isset($_POST['submit'])) {
 	$result = file_get_contents($url, false, $context);
 
 	$json_result = json_decode($result, true);
+	print_r($json_result);
 	echo $json_result['status'];
 }
 ?>

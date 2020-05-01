@@ -7,7 +7,7 @@ import threading
 app = Flask(__name__)
 
 
-@app.route('/get_optimal_route', methods=['GET'])
+@app.route('/get_optimal_route', methods=['POST'])
 def get_optimal_route():
 	try:
 		source = request.args.get('source')
@@ -27,7 +27,7 @@ def get_optimal_route():
 		results = mycursor.fetchall()
 		for result in results:
 			# un nod este alcatuit din nr de curse, numarul de ore si lista de curse
-			node = (1, [(result['departure_day'], result['departure_hour'], result['flight_id'], result['src'],
+			node = (1, [(result['departure_day'], result['departure_hour'], result['ride_id'], result['src'],
 											result['dst'], result['duration'])])
 			open.append(node)
 		while len(open) > 0:
@@ -78,7 +78,7 @@ def get_optimal_route():
 		return jsonify({'status': str(err), 'route': []}), 200
 
 
-@app.route('/book_ticket', methods=['GET'])
+@app.route('/book_ticket', methods=['POST'])
 def book_ticket():
 	try:
 		ride_ids = request.args.getlist('ride_ids[]')
@@ -125,7 +125,7 @@ def book_ticket():
 		return jsonify({'status': str(err), 'booking_id': ''}), 200
 
 
-@app.route('/buy_ticket', methods=['GET'])
+@app.route('/buy_ticket', methods=['POST'])
 def buy_ticket():
 	try:
 		reservation_id = request.args.get('reservation_id')
