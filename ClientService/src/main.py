@@ -7,7 +7,7 @@ import threading
 app = Flask(__name__)
 
 
-@app.route('/get_optimal_route', methods=['POST'])
+@app.route('/get_optimal_route', methods=['GET'])
 def get_optimal_route():
 	try:
 		source = request.args.get('source')
@@ -78,7 +78,7 @@ def get_optimal_route():
 		return jsonify({'status': str(err), 'route': []}), 200
 
 
-@app.route('/book_ticket', methods=['POST'])
+@app.route('/book_ticket', methods=['GET'])
 def book_ticket():
 	try:
 		ride_ids = request.args.getlist('ride_ids[]')
@@ -125,7 +125,7 @@ def book_ticket():
 		return jsonify({'status': str(err), 'booking_id': ''}), 200
 
 
-@app.route('/buy_ticket', methods=['POST'])
+@app.route('/buy_ticket', methods=['GET'])
 def buy_ticket():
 	try:
 		reservation_id = request.args.get('reservation_id')
