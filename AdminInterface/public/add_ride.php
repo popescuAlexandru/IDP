@@ -22,7 +22,8 @@ if (isset($_POST['submit'])) {
 	$context  = stream_context_create($options);
 	$result = file_get_contents($url, false, $context);
 
-	echo $result;
+	$json_result = json_decode($result, true);
+	echo $json_result['status'];
 }
 ?>
 
