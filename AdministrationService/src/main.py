@@ -18,7 +18,7 @@ def add_ride():
 			command = "INSERT INTO rides(src, dst, departure_day, departure_hour, duration, available_seats, ride_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
 			values = (payload.get('source'), payload.get('dest'), int(payload.get('departure_day')),
 					  int(payload.get('departure_hour')), int(payload.get('duration')),
-					  int(payload.get('number_of_seats')), payload.get('ride_id')), int(payload.get('price')),
+					  int(payload.get('number_of_seats')), payload.get('ride_id'), int(payload.get('price')))
 			print(values)
 			mycursor.execute(command, values)
 			mycursor.close()
