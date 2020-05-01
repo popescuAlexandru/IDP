@@ -15,7 +15,7 @@ def get_optimal_route():
 		departure_day = int(request.args.get('departure_day'))
 		max_rides = int(request.args.get('max_rides'))
 		if source is None or dest is None or departure_day is None or max_rides is None:
-			return jsonify({'status': 'bad request'}), 400
+			return jsonify({'status': 'bad request'}), 200
 		open = []
 		mini = [(1 << 30), []]
 		mydb.cmd_reset_connection()
@@ -72,10 +72,10 @@ def get_optimal_route():
 					open = [node] + open
 		mycursor.close()
 		if mini[0] == (1<<30):
-			return jsonify({'status': 'Unable to find optimal route', 'route': mini}), 400
+			return jsonify({'status': 'Unable to find optimal route', 'route': mini}), 200
 		return jsonify({'status': 'OK', 'route': mini}), 200
 	except Exception as err:
-		return jsonify({'status': str(err), 'route': []}), 400
+		return jsonify({'status': str(err), 'route': []}), 200
 
 
 @app.route('/book_ticket', methods=['GET'])
@@ -83,7 +83,7 @@ def book_ticket():
 	try:
 		ride_ids = request.args.getlist('ride_ids[]')
 		if ride_ids is None or len(ride_ids) == 0:
-			return jsonify({'status': 'bad request', 'booking_id': ''}), 400
+			return jsonify({'status': 'bad request', 'booking_id': ''}), 200
 		booking_id = uuid.uuid4().hex
 		print(booking_id)
 		# Verifica pentru fiecare cursa daca exista si daca mai sunt bilete rezervate disponibile
@@ -99,12 +99,12 @@ def book_ticket():
 				print(ride_id, mycursor.rowcount)
 				if mycursor.rowcount <= 0:
 					mycursor.close()
-					return jsonify({'status': 'Ride {} does not exist'.format(ride_id), 'booking_id': ''}), 400
+					return jsonify({'status': 'Ride {} does not exist'.format(ride_id), 'booking_id': ''}), 200
 				results = mycursor.fetchall()
 				for result in results:
 					if result['booked_tickets'] >= result['available_seats'] * 1.1:
 						mycursor.close()
-						return jsonify({'status': 'There are no more seats left for ride {}'.format(ride_id), 'booking_id': ''}), 400
+						return jsonify({'status': 'There are no more seats left for ride {}'.format(ride_id), 'booking_id': ''}), 200
 			# Introduce in tabela bookings noua rezervare
 			command = "insert into bookings values('{}');".format(booking_id)
 			mycursor.reset()
@@ -122,7 +122,7 @@ def book_ticket():
 			mydb.commit()
 			return jsonify({'status': 'OK', 'booking_id': booking_id}), 200
 	except Exception as err:
-		return jsonify({'status': str(err), 'booking_id': ''}), 400
+		return jsonify({'status': str(err), 'booking_id': ''}), 200
 
 
 @app.route('/buy_ticket', methods=['GET'])
@@ -131,7 +131,7 @@ def buy_ticket():
 		reservation_id = request.args.get('reservation_id')
 		credit_card = request.args.get('credit_card')
 		if reservation_id is None or credit_card is None:
-			return jsonify({'status': 'bad request', 'boarding_pass': ''}), 400
+			return jsonify({'status': 'bad request', 'boarding_pass': ''}), 200
 		# Extragem cursele cuprinse de rezervare
 		ride_ids = []
 		boardingPass = ''
@@ -141,7 +141,7 @@ def buy_ticket():
 		mycursor.execute(command)
 		if mycursor.rowcount <= 0:
 			mycursor.close()
-			return jsonify({'status': 'Wrong booking id', 'boarding_pass': ''}), 400
+			return jsonify({'status': 'Wrong booking id', 'boarding_pass': ''}), 200
 		results = mycursor.fetchall()
 		for result in results:
 			ride_ids.append(result['ride_id'])
@@ -156,12 +156,12 @@ def buy_ticket():
 				print(ride_id, mycursor.rowcount)
 				if mycursor.rowcount <= 0:
 					mycursor.close()
-					return jsonify({'status': 'Ride {} was canceled'.format(ride_id), 'boarding_pass': ''}), 400
+					return jsonify({'status': 'Ride {} was canceled'.format(ride_id), 'boarding_pass': ''}), 200
 				results = mycursor.fetchall()
 				for result in results:
 					if result['bought_tickets'] >= result['available_seats']:
 						mycursor.close()
-						return jsonify({'status': 'There are no more seats left for ride {}'.format(ride_id), 'boarding_pass': ''}), 400
+						return jsonify({'status': 'There are no more seats left for ride {}'.format(ride_id), 'boarding_pass': ''}), 200
 					else:
 						details.append((result['departure_day'], result['departure_hour'], result['ride_id'], result['src'],
 										result['dst'], result['duration']))
@@ -192,7 +192,7 @@ def buy_ticket():
 		boardingPass += "Enjoy the ride!\n"
 		return jsonify({'status': 'OK', 'boarding_pass': boardingPass}), 200
 	except Exception as err:
-		return jsonify({'status': str(err), 'boarding_pass': ''}), 400
+		return jsonify({'status': str(err), 'boarding_pass': ''}), 200
 
 
 def init_db():
