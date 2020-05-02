@@ -105,13 +105,15 @@ def init_db():
 					
 					create table if not exists bookings(
 						booking_id varchar(50) primary key
+						bought BOOLEAN,
+						time varchar(255)
 					);
 					
 					create table if not exists rides_bookings(
 						ride_id varchar(50),
 						booking_id varchar(50),
-						FOREIGN KEY (ride_id) REFERENCES rides (ride_id),
-						FOREIGN KEY (booking_id) REFERENCES bookings (booking_id)
+						FOREIGN KEY (ride_id) REFERENCES rides (ride_id) ON DELETE CASCADE,
+						FOREIGN KEY (booking_id) REFERENCES bookings (booking_id) ON DELETE CASCADE
 					);
 				""",
 				multi=True

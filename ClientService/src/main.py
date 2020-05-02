@@ -3,6 +3,7 @@ from flask import request, jsonify, Response
 import uuid
 import mysql.connector
 import threading
+import datetime
 
 app = Flask(__name__)
 
@@ -106,7 +107,9 @@ def book_ticket():
 						mycursor.close()
 						return jsonify({'status': 'There are no more seats left for ride {}'.format(ride_id), 'booking_id': ''}), 200
 			# Introduce in tabela bookings noua rezervare
-			command = "insert into bookings values('{}');".format(booking_id)
+			utc_datetime = datetime.datetime.utcnow()
+			current_time = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
+			command = "insert into bookings values('{}', false, '{}');".format(booking_id, current_time)
 			mycursor.reset()
 			mycursor.execute(command)
 			# Updateaza numarul de bilete rezervate si introdu in tabela rides_booking asociearea dintre booking id si ride id
@@ -171,7 +174,9 @@ def buy_ticket():
 				mycursor.reset()
 				mycursor.execute(command)
 			# Stergem din tabela booking_id rezervarea
-			command = "delete from bookings where booking_id='{}'".format(reservation_id)
+			utc_datetime = datetime.datetime.utcnow()
+			current_time = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
+			command = "update bookings set bought=true and time='{}' where booking_id='{}'".format(current_time, reservation_id)
 			mycursor.reset()
 			mycursor.execute(command)
 			# Salvam modificarile in baza de date
@@ -216,13 +221,15 @@ def init_db():
 					
 					create table if not exists bookings(
 						booking_id varchar(50) primary key
+						bought BOOLEAN,
+						time varchar(255)
 					);
 					
 					create table if not exists rides_bookings(
 						ride_id varchar(50),
 						booking_id varchar(50),
-						FOREIGN KEY (ride_id) REFERENCES rides (ride_id),
-						FOREIGN KEY (booking_id) REFERENCES bookings (booking_id)
+						FOREIGN KEY (ride_id) REFERENCES rides (ride_id) ON DELETE CASCADE,
+						FOREIGN KEY (booking_id) REFERENCES bookings (booking_id) ON DELETE CASCADE
 					);
 				""",
 				multi=True

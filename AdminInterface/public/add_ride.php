@@ -33,28 +33,28 @@ if (isset($_POST['submit'])) {
     <div class="text-block">
       <form method="post">
         <label for="source">Source Name</label>
-        <input type="text" name="source" id="source">
+        <input type="text" name="source" id="source" required>
 
         <label for="dest">Destination Name</label>
-        <input type="text" name="dest" id="dest">
+        <input type="text" name="dest" id="dest" required>
 
         <label for="departure_day">Departure Day</label>
-        <input type="number" name="departure_day" id="departure_day" min="1" max="365">
+        <input type="number" name="departure_day" id="departure_day" min="1" max="365" required>
 
         <label for="departure_hour">Departure Hour</label>
-        <input type="number" name="departure_hour" id="departure_hour" min="0" max="23">
+        <input type="number" name="departure_hour" id="departure_hour" min="0" max="23" required>
 
         <label for="duration">Duration</label>
-        <input type="number" name="duration" id="duration" min="0">
+        <input type="number" name="duration" id="duration" min="0" required>
 
         <label for="price">Price</label>
-        <input type="number" name="price" id="price" min="1">
+        <input type="number" name="price" id="price" min="1" required>
 
         <label for="number_of_seats">Number of Seats</label>
-        <input type="number" name="number_of_seats" id="number_of_seats" min="1">
+        <input type="number" name="number_of_seats" id="number_of_seats" min="1" required>
 
         <label for="ride_id">Ride ID</label>
-        <input type="text" name="ride_id" id="ride_id">
+        <input type="text" name="ride_id" id="ride_id" required>
 
         <input type="submit" name="submit" value="Submit">
       </form>

@@ -11,6 +11,14 @@
       <li>
         <a href="list_rides.php"><strong>List rides</strong></a> - list rides
       </li>
+      <h1>Book Rides</h1>
+      <li>
+        <a href="book_rides.php"><strong>Book rides</strong></a> - book rides
+      </li>
+      <h1>Buy Tickets</h1>
+      <li>
+        <a href="buy_tickets.php"><strong>Buy Tickets</strong></a> - buy tickets
+      </li>
     </div>
     <?php include "templates/footer.php"; ?>
 </div>
