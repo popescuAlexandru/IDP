@@ -152,7 +152,7 @@ def buy_ticket():
 		mycursor.execute(command)
 		results = mycursor.fetchall()
 		for result in results:
-			if result['bought']:
+			if result['bought'] == 1:
 				return jsonify({'status': 'This booking id was already used', 'boarding_pass': ''}), 200
 		# Verificam daca pentru toate cursele putem cumpara bilete
 		with buy_lock:
@@ -182,7 +182,7 @@ def buy_ticket():
 			# Stergem din tabela booking_id rezervarea
 			utc_datetime = datetime.datetime.utcnow()
 			current_time = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
-			command = "update bookings set bought=true and time='{}' where booking_id='{}'".format(current_time, reservation_id)
+			command = "update bookings set bought=1 and time='{}' where booking_id='{}'".format(current_time, reservation_id)
 			mycursor.reset()
 			mycursor.execute(command)
 			# Salvam modificarile in baza de date

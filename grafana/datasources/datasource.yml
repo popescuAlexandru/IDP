@@ -1,0 +1,11 @@
+apiVersion: 1
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    database: rides
+    user: root
+    password: iamroot
+    url: http://mysql:3306
+    isDefault: true
+    editable: true
