@@ -220,7 +220,7 @@ def init_db():
 					);
 					
 					create table if not exists bookings(
-						booking_id varchar(50) primary key
+						booking_id varchar(50) primary key,
 						bought BOOLEAN,
 						time varchar(255)
 					);
