@@ -148,6 +148,12 @@ def buy_ticket():
 		results = mycursor.fetchall()
 		for result in results:
 			ride_ids.append(result['ride_id'])
+		command = "select bought from bookings where booking_id = '{}';".format(reservation_id)
+		mycursor.execute(command)
+		results = mycursor.fetchall()
+		for result in results:
+			if result['bought'] == 1:
+				return jsonify({'status': 'This booking id was already used', 'boarding_pass': ''}), 200
 		# Verificam daca pentru toate cursele putem cumpara bilete
 		with buy_lock:
 			details = []

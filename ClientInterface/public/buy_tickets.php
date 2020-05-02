@@ -31,9 +31,9 @@
             $json_result = json_decode($result, true);
             $boarding_pass = $json_result['boarding_pass'];
             $status = $json_result['status'];
-            echo $status;
+            echo "<br>" . "<br>" . $status;
             if ($status === 'OK') {
-                echo $boarding_pass;
+                echo nl2br($boarding_pass);
             }
         }
         ?>
