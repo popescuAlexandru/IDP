@@ -179,10 +179,9 @@ def buy_ticket():
 				command = "update rides set bought_tickets=bought_tickets+1 where ride_id='{}'".format(ride_id)
 				mycursor.reset()
 				mycursor.execute(command)
-			# Stergem din tabela booking_id rezervarea
 			utc_datetime = datetime.datetime.utcnow()
 			current_time = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
-			command = "update bookings set bought=1 and time='{}' where booking_id='{}'".format(current_time, reservation_id)
+			command = "update bookings set bought=1, time='{}' where booking_id='{}'".format(current_time, reservation_id)
 			mycursor.reset()
 			mycursor.execute(command)
 			# Salvam modificarile in baza de date

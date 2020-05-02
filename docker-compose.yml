@@ -32,5 +32,17 @@ services:
     ports:
       - '16000:16000'
 
+  visapp:
+    image: grafana/grafana:latest
+    ports:
+      - '80:3000'
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=root
+      - GF_SECURITY_ADMIN_PASSWORD=iamroot
+
 volumes:
     db_data: {}
+    grafana_data: {}
