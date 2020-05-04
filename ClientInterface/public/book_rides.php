@@ -6,7 +6,7 @@
     <img src="images/car.jpg" id="bg" alt="">
     <div class="text-block">
         <?php
-        require "../common.php";
+        require "common.php";
 
         if (isset($_POST['submit'])) {
             $url = 'http://localhost:16000/book_ticket?';

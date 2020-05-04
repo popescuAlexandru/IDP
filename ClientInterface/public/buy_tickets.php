@@ -13,7 +13,7 @@
         <input type="submit" name="submit" value="Submit">
 
         <?php
-        require "../common.php";
+        require "common.php";
 
         if (isset($_POST['submit'])) {
             $url = 'http://localhost:16000//buy_ticket?reservation_id=' . urlencode($_POST["booking_id"]) . '&credit_card=' . urlencode($_POST["credit_card"]);

@@ -6,10 +6,6 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     restart: always
-    ports:
-      - '3306:3306'
-    expose:
-      - '3306'
     environment:
       MYSQL_ROOT_PASSWORD: 'iamroot'
       MYSQL_DATABASE: 'rides'
@@ -21,27 +17,39 @@ services:
     depends_on:
       - mysql
     restart: always
-    ports:
-      - '15000:15000'
 
   client_service:
     image: alexandrupopescu0697/clientservice:latest
     depends_on:
       - mysql
     restart: always
-    ports:
-      - '16000:16000'
 
   visapp:
-    image: grafana/grafana:latest
+    image: alexandrupopescu0697/grafana:latest
     ports:
       - '80:3000'
+    depends_on:
+      - mysql
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./grafana/:/etc/grafana/provisioning
     environment:
       - GF_SECURITY_ADMIN_USER=root
       - GF_SECURITY_ADMIN_PASSWORD=iamroot
+
+  admin_interface:
+    image: alexandrupopescu0697/admininterface:latest
+    ports:
+      - '9000:80'
+    depends_on:
+      - adm_service
+
+  client_interface:
+    image: alexandrupopescu0697/clientinterface:latest
+    ports:
+      - '10000:80'
+    depends_on:
+      - client_service
+
 
 volumes:
     db_data: {}

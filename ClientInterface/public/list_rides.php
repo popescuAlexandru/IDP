@@ -1,5 +1,5 @@
 <?php
-    require "../common.php";
+    require "common.php";
 
     if (isset($_GET["ride_id"])) {
         $url = 'http://localhost:15000/cancel_ride';
