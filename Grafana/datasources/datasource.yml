@@ -2,7 +2,6 @@ apiVersion: 1
 datasources:
   - name: MySQL
     type: mysql
-    access: proxy
     database: rides
     user: root
     password: iamroot
