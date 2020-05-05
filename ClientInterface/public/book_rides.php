@@ -9,7 +9,7 @@
         require "common.php";
 
         if (isset($_POST['submit'])) {
-            $url = 'http://localhost:16000/book_ticket?';
+            $url = 'client_service:16000/book_ticket?';
 
             foreach ($_POST['name'] as $id) {
                 $url = $url . 'ride_ids[]=' . urlencode($id) . '&';

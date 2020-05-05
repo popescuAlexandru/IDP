@@ -2,7 +2,7 @@
 require "common.php";
 
 if (isset($_POST['submit'])) {
-	$url = 'http://localhost:16000/get_optimal_route?source=' . urlencode($_POST["source"]) . '&dest=' . urlencode($_POST["dest"]) . '&departure_day=' . urlencode($_POST["departure_day"]) . '&max_rides=' . urlencode($_POST["max_rides"]);
+	$url = 'client_service:16000/get_optimal_route?source=' . urlencode($_POST["source"]) . '&dest=' . urlencode($_POST["dest"]) . '&departure_day=' . urlencode($_POST["departure_day"]) . '&max_rides=' . urlencode($_POST["max_rides"]);
 
 	$options = array(
 		'http' => array(

@@ -2,7 +2,7 @@
     require "common.php";
 
     if (isset($_GET["ride_id"])) {
-        $url = 'http://localhost:15000/cancel_ride';
+        $url = 'adm_service:15000/cancel_ride';
         $data = array('ride_id' => $_GET["ride_id"]);
 
         $options = array(

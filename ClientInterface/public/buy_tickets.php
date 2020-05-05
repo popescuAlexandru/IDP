@@ -16,7 +16,7 @@
         require "common.php";
 
         if (isset($_POST['submit'])) {
-            $url = 'http://localhost:16000//buy_ticket?reservation_id=' . urlencode($_POST["booking_id"]) . '&credit_card=' . urlencode($_POST["credit_card"]);
+            $url = 'client_service:16000//buy_ticket?reservation_id=' . urlencode($_POST["booking_id"]) . '&credit_card=' . urlencode($_POST["credit_card"]);
 
             $options = array(
                 'http' => array(
