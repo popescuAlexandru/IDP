@@ -4,7 +4,6 @@ datasources:
     type: mysql
     database: rides
     user: root
-    password: iamroot
     url: mysql:3306
-    isDefault: true
-    editable: true
+    secureJsonData:
+      password: iamroot
