@@ -1,7 +1,7 @@
 <?php
 
 if (isset($_POST['submit'])) {
-	$url = 'adm_service:15000/add_ride';
+	$url = 'http://adm_service:15000/add_ride';
 	$data = array(  'source' => $_POST["source"],
 					'dest' => $_POST["dest"],
 					'departure_day' => $_POST["departure_day"],

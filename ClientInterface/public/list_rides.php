@@ -2,7 +2,7 @@
     require "common.php";
 
     if (isset($_GET["ride_id"])) {
-        $url = 'adm_service:15000/cancel_ride';
+        $url = 'http://adm_service:15000/cancel_ride';
         $data = array('ride_id' => $_GET["ride_id"]);
 
         $options = array(
@@ -19,7 +19,7 @@
         echo $json_result['status'] . "<br>";
     }
 
-    $url = 'http://localhost:15000/list_rides';
+    $url = 'http://adm_service:15000/list_rides';
 	$data = array();
 
 	$options = array(
